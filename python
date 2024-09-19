@@ -1,0 +1,82 @@
+import subprocess
+import os
+
+class NvidiaTTSClient:
+    def __init__(self, server_url, function_id, api_key):
+        self.server_url = server_url
+        self.function_id = function_id
+        self.api_key = api_key
+
+    def generate_audio(self, text, output_file, voice="English-US-RadTTS.Female-1"):
+        """
+        Generates an audio file from text using NVIDIA's TTS model via gRPC.
+
+        Args:
+            text (str): The text to be converted to speech.
+            output_file (str): The path where the generated audio will be saved.
+            voice (str): The voice to be used for speech synthesis.
+        """
+        # Change directory to the location of python-clients if necessary
+        command = [
+            "python", "scripts/tts/talk.py",  # Change to relative path
+            "--server", self.server_url,
+            "--use-ssl",
+            "--metadata", f"function-id {self.function_id}",
+            "--metadata", f"authorization Bearer {self.api_key}",
+            "--text", text,
+            "--voice", voice,
+            "--output", output_file
+        ]
+
+        # Execute the command and generate the audio file
+        try:
+            subprocess.run(command, check=True, cwd="python-clients")  # Ensure the command runs in the python-clients directory
+            print(f"Audio successfully generated and saved as {output_file}")
+        except subprocess.CalledProcessError as e:
+            print(f"Error in generating audio: {e}")
+
+    def list_voices(self):
+        """
+        Lists all available voices for the NVIDIA TTS model.
+        """
+        # Command to list available voices
+        command = [
+            "python", "scripts/tts/talk.py",  # Change to relative path
+            "--server", self.server_url,
+            "--use-ssl",
+            "--metadata", f"function-id {self.function_id}",
+            "--metadata", f"authorization Bearer {self.api_key}",
+            "--list-voices"
+        ]
+
+        # Execute the command to list voices
+        try:
+            subprocess.run(command, check=True, cwd="python-clients")  # Ensure the command runs in the python-clients directory
+        except subprocess.CalledProcessError as e:
+            print(f"Error in listing voices: {e}")
+
+
+if __name__ == "__main__":
+    # Replace the following with your actual server URL, function ID, and API key
+    SERVER_URL = "grpc.nvcf.nvidia.com:443"
+    FUNCTION_ID = "5e607c81-7aa6-44ce-a11d-9e08f0a3fe49"
+
+    # Option 1: Hardcode the API key (not recommended for production)
+    API_KEY = "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"  # Replace with your actual API key
+
+    if not API_KEY:
+        raise ValueError(
+            "API Key not found. Set the API_KEY_REQUIRED_IF_EXECUTING_OUTSIDE_NGC as an environment variable.")
+
+    # Initialize the TTS client
+    tts_client = NvidiaTTSClient(SERVER_URL, FUNCTION_ID, API_KEY)
+
+    # Example usage to generate audio
+    text_to_convert = "This audio is generated from NVIDIA's text-to-speech model."
+    output_audio_file = "audio.wav"
+
+    # Generate the audio file from the text
+    tts_client.generate_audio(text_to_convert, output_audio_file)
+
+    # List available voices (Optional)
+    # tts_client.list_voices()
