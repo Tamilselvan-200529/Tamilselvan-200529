@@ -108,13 +108,7 @@
 
 ---
 
-## 🏅 Achievements & Activity
 
-<p align="center">
-  <img src="https://github-profile-trophy.vercel.app/?username=your-username&theme=gruvbox&no-frame=true&margin-w=4" />
-  <br/>
-  <img src="https://github-readme-activity-graph.cyclic.app/graph?username=your-username&bg_color=0d1117&color=36bcf7&line=5ce0ff&point=fff&area=true&hide_border=true" />
-</p>
 
 ---
 
